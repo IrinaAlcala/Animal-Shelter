@@ -1,22 +1,10 @@
 from django.shortcuts import render, redirect
+from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Animal
+from .forms import FeedingForm
 
 # View functions
-
-class AnimalCreate(CreateView):
-    model = Animal
-    fields = ['name', 'type', 'description', 'age']
-    success_url = '/animals/'
-
-class AnimalUpdate(UpdateView):
-  model = Animal
-  fields = ['type', 'description', 'age']
-  
-class AnimalDelete(DeleteView):
-  model = Animal
-  success_url = '/animals/'
-
 
 def home(request):
   return render(request, 'home.html')
@@ -24,13 +12,36 @@ def home(request):
 def about(request):
   return render(request, 'about.html')
 
-def animals_index(request):
-  animals = Animal.objects.all()
-  return render(request, 'animals/index.html', { 'animals': animals })
+class AnimalList(ListView):
+  model = Animal
 
-def animals_detail(request, animal_id):
-  animal = Animal.objects.get(id=animal_id)
-  return render(request, 'animals/detail.html', { 'animal': animal })
+  def get_queryset(self):
+    return Animal.objects.all()
 
-  
-  
+def animal_detail(request, pk):
+  animal = Animal.objects.get(id=pk)
+  feeding_form = FeedingForm()
+  return render(request, 'main_app/animal_detail.html', {
+    'animal': animal,
+    'feeding_form': feeding_form
+  })
+
+def add_feeding(request, pk):
+  form = FeedingForm(request.POST)
+  if form.is_valid():
+    new_feeding = form.save(commit=False)
+    new_feeding.animal_id = pk
+    new_feeding.save()
+  return redirect('animals_detail', pk=pk)
+
+class AnimalCreate(CreateView):
+  model = Animal
+  fields = '__all__' # means ['name', 'breed', 'description', 'age']
+
+class AnimalUpdate(UpdateView):
+  model = Animal
+  fields = ['name', 'description', 'age']
+
+class AnimalDelete(DeleteView):
+  model = Animal
+  success_url = '/animals/'
