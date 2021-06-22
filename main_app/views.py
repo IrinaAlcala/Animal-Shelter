@@ -12,18 +12,22 @@ def home(request):
 def about(request):
   return render(request, 'about.html')
 
+def animals_index(request):
+  animals = Animal.objects.all()
+  return render(request, 'animals/index.html', { 'animals': animals })
+
 class AnimalList(ListView):
   model = Animal
 
-  def get_queryset(self):
+def get_queryset(self):
     return Animal.objects.all()
 
-def animals_detail(request, pk):
-  animal = Animal.objects.get(id=pk)
+def animals_detail(request, animal_id):
+  animal = Animal.objects.get(id=animal_id)
   feeding_form = FeedingForm()
-  return render(request, 'main_app/animal_detail.html', {
+  return render(request, 'animals/detail.html', {
     'animal': animal,
-    'feeding_form': feeding_form
+    'feeding_form': feeding_form,
   })
 
 def add_feeding(request, pk):
@@ -37,10 +41,12 @@ def add_feeding(request, pk):
 class AnimalCreate(CreateView):
   model = Animal
   fields = '__all__' # means ['name', 'breed', 'description', 'age']
+  success_url = '/animals/'
 
 class AnimalUpdate(UpdateView):
   model = Animal
   fields = ['name', 'description', 'age']
+  success_url = '/animals/'
 
 class AnimalDelete(DeleteView):
   model = Animal
