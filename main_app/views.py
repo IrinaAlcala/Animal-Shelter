@@ -30,13 +30,13 @@ def animals_detail(request, animal_id):
     'feeding_form': feeding_form,
   })
 
-def add_feeding(request, pk):
-  form = FeedingForm(request.POST)
+def add_feeding(request, animal_id):
+  form = FeedingForm(request.POST, request.FILES)
   if form.is_valid():
     new_feeding = form.save(commit=False)
-    new_feeding.animal_id = pk
+    new_feeding.animal_id = animal_id
     new_feeding.save()
-  return redirect('animals_detail', pk=pk)
+  return redirect('detail', animal_id=animal_id)
 
 class AnimalCreate(CreateView):
   model = Animal
