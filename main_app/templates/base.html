@@ -20,14 +20,15 @@
                 <ul class="right">
 
                     
-                    {% if user.is_authenticated %}
+                    <!-- {% if user.is_authenticated %} -->
                     
           <li><a href="{% url 'animals_create' %}">Add an Animal</a></li>
           <li><a href="{% url 'animals_index' %}">View All My Animals</a></li>
           <li><a href="{% url 'logout' %}">Log Out</a></li>
-        {% else %}
+        <!-- {% else %} -->
           <li><a href="{% url 'login' %}">Log In</a></li>
-          {% endif %}
+          <li><a href="{% url 'signup' %}">Sign Up</a></li>
+          <!-- {% endif %} -->
           
                 </ul>
             </div>
